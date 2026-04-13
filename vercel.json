@@ -2,6 +2,9 @@
   "functions": {
     "api/corrigir.js": {
       "maxDuration": 30
+    },
+    "api/corrigir-ecg.js": {
+      "maxDuration": 30
     }
   }
 }
