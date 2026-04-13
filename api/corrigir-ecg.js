@@ -1,33 +1,33 @@
 const GABARITO = {
   1:  { componentes: ["ritmo sinusal", "bloqueio de ramo direito", "sobrecarga atrial esquerda"] },
-  2:  { componentes: ["ritmo atrial multifocal"] },
-  3:  { componentes: ["ritmo sinusal", "bloqueio atrioventricular de segundo grau mobitz i", "bloqueio de ramo direito"] },
-  4:  { componentes: ["ritmo sinusal", "area eletrica inativa inferior", "alteracao de repolarizacao inferolateral"] },
+  2:  { componentes: ["ritmo ectopico atrial multifocal"] },
+  3:  { componentes: ["ritmo sinusal", "bloqueio atrioventricular de segundo grau mobitz i", "bloqueio de ramo direito", "area eletrica inativa inferolateral"] },
+  4:  { componentes: ["ritmo sinusal", "sobrecarga atrial esquerda", "area eletrica inativa inferior"] },
   5:  { componentes: ["ritmo sinusal", "supradesnivelamento de segmento st parede inferolateral", "imagem em espelho"] },
   6:  { componentes: ["troca de eletrodos"] },
-  7:  { componentes: ["bloqueio atrioventricular 2:1", "bloqueio de ramo esquerdo"] },
+  7:  { componentes: ["bloqueio atrioventricular 2:1", "bloqueio de ramo esquerdo", "desvio do eixo para a direita"] },
   8:  { componentes: ["bloqueio atrioventricular total", "bloqueio de ramo direito", "bloqueio divisional anterossuperior esquerdo"] },
-  9:  { componentes: ["taquicardia supraventricular"] },
+  9:  { componentes: ["taquicardia supraventricular por reentrada nodal"] },
   10: { componentes: ["ritmo juncional bradicardico"] },
-  11: { componentes: ["taquicardia sinusal", "sobrecarga ventricular esquerda"] },
-  12: { componentes: ["ritmo sinusal", "disturbio de conducao pelo ramo direito", "bloqueio divisional anterossuperior esquerdo"] },
+  11: { componentes: ["taquicardia sinusal", "sobrecarga ventricular esquerda", "troca de eletrodos v1 e v2"] },
+  12: { componentes: ["taquicardia sinusal", "desvio de eixo para a direita", "disturbio de conducao pelo ramo direito", "bloqueio divisional anterossuperior esquerdo"] },
   13: { componentes: ["marcapasso modo aai", "bloqueio de ramo esquerdo"] },
   14: { componentes: ["fibrilacao atrial", "marcapasso ventricular vvi"] },
-  15: { componentes: ["marcapasso modo vvi"] },
-  16: { componentes: ["ritmo sinusal para os atrios", "marcapasso ventricular vvi"] },
+  15: { componentes: ["taquicardia atrial", "marcapasso ventricular vvi"] },
+  16: { bonus: true, componentes: [] }, // Q16: questão de especialista — todos ganham 1.0 automaticamente
   17: { componentes: ["fibrilacao atrial", "sobrecarga ventricular esquerda"] },
   18: { componentes: ["ritmo sinusal", "area eletrica inativa anterior", "area eletrica inativa inferior", "sobrecarga ventricular esquerda"] },
   19: { componentes: ["ritmo sinusal", "dentro dos limites da normalidade"] },
   20: { componentes: ["marcapasso modo aai", "sobrecarga ventricular esquerda"] },
   21: { componentes: ["velocidade incorreta 50mm/s"] },
-  22: { componentes: ["bloqueio atrioventricular total"] },
+  22: { componentes: ["bloqueio atrioventricular total", "progressao lenta da onda r"] },
   23: { componentes: ["ritmo sinusal", "pre-excitacao ventricular intermitente"] },
   24: { componentes: ["taquicardia ventricular"] },
   25: { componentes: ["flutter atrial", "intervalo qtc prolongado"] },
   26: { componentes: ["taquicardia supraventricular por reentrada nodal"] },
   27: { componentes: ["ritmo sinusal", "dentro da normalidade para a idade"] },
   28: { componentes: ["ritmo sinusal", "sobrecarga biatrial"] },
-  29: { componentes: ["ritmo sinusal", "extrassistole ventricular"] },
+  29: { componentes: ["ritmo sinusal", "extrassistole ventricular", "interferencia"] },
   30: { componentes: ["mobitz i tem alargamento progressivo do pr", "mobitz ii tem bloqueio subito com pr fixo"] },
 };
 
@@ -48,6 +48,17 @@ export default async function handler(req, res) {
   const gabarito = GABARITO[questao];
   if (!gabarito) {
     return res.status(400).json({ error: `Questão ${questao} não encontrada no gabarito` });
+  }
+
+  // Questão bonus — todos ganham 1.0 automaticamente
+  if (gabarito.bonus) {
+    return res.status(200).json({
+      questao,
+      nota: 1,
+      total_componentes: 1,
+      bonus: true,
+      componentes: [{ descricao: 'questão de especialista (bonus)', presente: true }],
+    });
   }
 
   const componentes = gabarito.componentes;
